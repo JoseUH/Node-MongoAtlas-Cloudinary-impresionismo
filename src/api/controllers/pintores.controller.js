@@ -1,5 +1,7 @@
 const { deleteFile } = require("../../middlewares/deleteFile");
 const Pintor = require("../models/pintores.model.js");
+const HTTPSTATUSCODE = require("../../utils/httpStatusCode")
+
 
 
 const getAllPintores = async (req, res, next) => {
@@ -8,7 +10,7 @@ const getAllPintores = async (req, res, next) => {
     const allPintores = await Pintor.find().populate("cuadros");
     return res.json({
       status: 200,
-      message: "Pintores OK",
+      message: HTTPSTATUSCODE[200],
       pintores: allPintores,
     });
   } catch (error) {
@@ -22,7 +24,7 @@ const getPintoresByID = async (req, res, next) => {
     const pintoresByID = await Pintor.findById(id);
     return res.json({
       status: 200,
-      message: "Pintores OK",
+      message: HTTPSTATUSCODE[200],
       pintor: pintoresByID,
     });
   } catch (error) {
@@ -40,7 +42,7 @@ const createPintores = async (req, res, next) => {
     const createdPintores = await newPintores.save();
     return res.json({
       status: 201,
-      message: "Pintores created",
+      message: HTTPSTATUSCODE[201],
       console: createdPintores,
     });
   } catch (error) {
@@ -68,19 +70,20 @@ const deletePintores = async (req, res, next) => {
   
       patchPintor._id = id;
 
-      // const pintorData= await Pintor.findById(id)
+      
+      const pintorData= await Pintor.findById(id)
 
       // patchPintor.cuadros =[...pintorData.cuadros, ...patchPintor.cuadros]
-
-      const PintorDB = await Pintor.findByIdAndUpdate(id, patchPintor);
-      if (PintorDB.foto) {
-        deleteFile(PintorDB.foto);
+      if (pintorData.foto) {
+        deleteFile(pintorData.foto);
         }
 
       if (req.file) {
         patchPintor.foto = req.file.path;
       }
   
+      const PintorDB = await Pintor.findByIdAndUpdate(id, patchPintor);
+      
       return res.status(200).json({ nuevo: patchPintor, vieja: PintorDB });
     } catch (error) {
 

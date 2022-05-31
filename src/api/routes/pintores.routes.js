@@ -3,6 +3,7 @@ const express = require("express");
 
 const router = express.Router();
 const upload = require("../../middlewares/file")
+const {isAuth} = require("../../middlewares/auth.middleware");
 
 const {
   getAllPintores,
@@ -14,8 +15,8 @@ const {
 
 router.get("/", getAllPintores);
 router.get("/:id",  getPintoresByID);
-router.post("/",upload.single("foto"), createPintores);
-router.delete('/:id',upload.single("foto"), deletePintores);
-router.patch('/:id',upload.single("foto"), patchPintor)
+router.post("/",[isAuth],upload.single("foto"), createPintores);
+router.delete('/:id',[isAuth],upload.single("foto"), deletePintores);
+router.patch('/:id',[isAuth],upload.single("foto"), patchPintor)
 
 module.exports = router;

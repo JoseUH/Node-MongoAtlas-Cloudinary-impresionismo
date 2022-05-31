@@ -1,22 +1,32 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const cloudinary=require("cloudinary").v2
+const cloudinary=require("cloudinary").v2;
+const logger = require("morgan");
 
 
 const cuadrosRouter = require("./src/api/routes/cuadros.routes");
 const pintoresRouter = require("./src/api/routes/pintores.routes");
+const userRouter = require("./src/api/routes/users.routes");
+
+dotenv.config();
 
 const {connect}= require("./src/utils/database")
 
-dotenv.config()
+connect();
+
+const PORT = process.env.PORT || 5000;
+
+const JWT_SECRET = process.env.JWT_SECRET
 
 const server = express();
 
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 
-connect();
+
+server.use(logger("dev"))
+
 
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
@@ -36,11 +46,13 @@ server.use(cors({
     credentials: true
 }))
 
+server.set("secretKey", JWT_SECRET)
 
 server.use("/cuadros", cuadrosRouter)
 server.use("/pintores", pintoresRouter);
+server.use("/users", userRouter);
 
-const PORT = process.env.PORT || 5000;
+
 
 server.listen(PORT, () => {
     console.log(`Server listening on http://localhost:${PORT}`)

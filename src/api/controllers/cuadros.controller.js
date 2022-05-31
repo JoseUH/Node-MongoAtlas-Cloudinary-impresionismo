@@ -1,5 +1,6 @@
 const { deleteFile } = require("../../middlewares/deleteFile");
 const Cuadro = require("../models/cuadros.model");
+const HTTPSTATUSCODE = require("../../utils/httpStatusCode")
 
 
 
@@ -8,7 +9,7 @@ const getAllCuadros = async (req, res, next) => {
     const allCuadros = await Cuadro.find();
     return res.json({
       status: 200,
-      message: "Cuadros OK",
+      message: HTTPSTATUSCODE[200],
       cuadros: allCuadros,
     });
   } catch (error) {
@@ -23,7 +24,7 @@ const getCuadrosByID = async (req, res, next) => {
     const cuadrosByID = await Cuadro.findById(id);
     return res.json({
       status: 200,
-      message: "Cuadro OK",
+      message: HTTPSTATUSCODE[200],
       Cuadro: cuadrosByID,
     });
   } catch (error) {
@@ -41,7 +42,7 @@ const createCuadros = async (req, res, next) => {
     const createdCuadros = await newCuadros.save();
     return res.json({
       status: 201,
-      message: "Cuadro created",
+      message: HTTPSTATUSCODE[201],
       cuadro: createdCuadros,
     });
   } catch (error) {
@@ -69,18 +70,18 @@ const deleteCuadros = async (req, res, next) => {
   
       patchCuadro._id = id;
 
-      // const cuadroData= await Cuadro.findById(id)
+      const cuadroData= await Cuadro.findById(id)
       // patchCuadro.autor =[...cuadroData.autor, ...patchCuadro.autor]
-  
-      const CuadroDB = await Cuadro.findByIdAndUpdate(id, patchCuadro);
-      if (CuadroDB.imagen) {
-        deleteFile(CuadroDB.imagen);
+      if (cuadroData.imagen) {
+        deleteFile(cuadroData.imagen);
         }
 
       if (req.file) {
         patchCuadro.imagen = req.file.path;
       }
   
+      const CuadroDB = await Cuadro.findByIdAndUpdate(id, patchCuadro);
+      
       return res.status(200).json({ nuevo: patchCuadro, vieja: CuadroDB });
     } catch (error) {
       return next(error);
