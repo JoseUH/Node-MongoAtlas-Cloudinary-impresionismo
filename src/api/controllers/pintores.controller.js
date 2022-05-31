@@ -73,8 +73,10 @@ const deletePintores = async (req, res, next) => {
       
       const pintorData= await Pintor.findById(id)
 
-      // patchPintor.cuadros =[...pintorData.cuadros, ...patchPintor.cuadros]
+      patchPintor.cuadros =[...pintorData.cuadros, ...patchPintor.cuadros]
+
       if (pintorData.foto) {
+        
         deleteFile(pintorData.foto);
         }
 

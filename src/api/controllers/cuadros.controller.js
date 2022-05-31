@@ -71,7 +71,9 @@ const deleteCuadros = async (req, res, next) => {
       patchCuadro._id = id;
 
       const cuadroData= await Cuadro.findById(id)
-      // patchCuadro.autor =[...cuadroData.autor, ...patchCuadro.autor]
+
+      patchCuadro.autor =[...cuadroData.autor, ...patchCuadro.autor]
+
       if (cuadroData.imagen) {
         deleteFile(cuadroData.imagen);
         }
